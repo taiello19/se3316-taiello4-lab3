@@ -10,6 +10,7 @@ app.use(express.json());
 
 
 
+
 app.get('/trackName', function(req, res){
     res.send('You sent this to the server:' + req.query.trackInputName);
     
