@@ -10,20 +10,36 @@ app.use(express.json());
 
 var csv = require("csv-parser");
 var fs = require("fs");
-var genresRes = [];
-var albumRes = [];
-var artistRes = [];
-var trackRes = [];
-fs.createReadStream("lab3-data/genres.csv").pipe(csv({})).on("data", (data) => genresRes.push(data)).on("end", () => {/*console.log(genresRes)*/});
-fs.createReadStream("lab3-data/raw_tracks.csv").pipe(csv({})).on("data", (data) => trackRes.push(data)).on("end", () => {/*console.log(trackRes)*/});
-fs.createReadStream("lab3-data/raw_artists.csv").pipe(csv({})).on("data", (data) => artistRes.push(data)).on("end", () => {/*console.log(artistRes)*/});
-fs.createReadStream("lab3-data/raw_albums.csv").pipe(csv({})).on("data", (data) => albumRes.push(data)).on("end", () => {/*console.log(albumRes)*/});
+var genresArray = [];
+var albumArray = [];
+var artistArray = [];
+var trackArray = [];
+fs.createReadStream("lab3-data/genres.csv").pipe(csv({})).on("data", (data) => genresArray.push(data)).on("end", () => {/*console.log(genresArray)*/});
+fs.createReadStream("lab3-data/raw_tracks.csv").pipe(csv({})).on("data", (data) => trackArray.push(data)).on("end", () => {/*console.log(trackArray)*/});
+fs.createReadStream("lab3-data/raw_artists.csv").pipe(csv({})).on("data", (data) => artistArray.push(data)).on("end", () => {/*console.log(artistArray)*/});
+fs.createReadStream("lab3-data/raw_albums.csv").pipe(csv({})).on("data", (data) => albumArray.push(data)).on("end", () => {/*console.log(albumArray)*/});
 
 
 app.get('/trackName', function(req, res){
     res.send('You sent this to the server:' + req.query.trackInputName);
     
 });
+
+app.get('/artist/:id', function(req, res){
+    const artistID = artistArray.find(element => element.artist_id == req.params.id);
+    const json = {};
+    json.name = artistID.artist_handle;
+    json.yearStart = artistID.artist_active_year_begin;
+    json.yearEnd = artistID.artist_active_year_end;
+    json.favs = artistID.artist_favorites;
+    json.location = artistID.artist_location;
+    json.website = artistID.artist_website;
+    
+    res.send(json);
+});
+
+
+
 
 
 
