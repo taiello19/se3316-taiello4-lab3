@@ -23,7 +23,6 @@ fs.createReadStream("lab3-data/raw_albums.csv").pipe(csv({})).on("data", (data) 
 app.get('/trackName', function(req, res){
     res.send('You sent this to the server:' + req.query.trackInputName);
     
-
 });
 
 

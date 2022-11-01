@@ -9,7 +9,6 @@ trackSearch.addEventListener('submit', function(e) {
 
     const track = document.getElementById("trackInput").value;
     
-
     fetch("http://localhost:3000/trackName?trackInputName=" + track,  {method: 'GET', headers: new Headers({'Content-Type': 'application/json'})})
         .then(res => res.text())
         .then(data => console.log(data))
