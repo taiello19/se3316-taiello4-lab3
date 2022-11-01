@@ -38,6 +38,25 @@ app.get('/artist/:id', function(req, res){
     res.send(json);
 });
 
+app.get('/track/:id', function(req, res){
+    const trackID = trackArray.find(element => element.track_id == req.params.id);
+    const json = {};
+    json.albumID = trackID.album_id;
+    json.albumTitle = trackID.album_title;
+    json.artistID = trackID.artist_id;
+    json.artistName = trackID.artist_name;
+    json.tags = trackID.tags;
+    json.dateCreated = trackID.track_date_created;
+    json.dateRecorded = trackID.track_date_recorded;
+    json.trackDuration = trackID.track_duration;
+    json.trackGenres = trackID.track_genres;
+    json.trackNumber = trackID.track_number;
+    json.trackTitle = trackID.track_title;
+
+    res.send(json);
+
+});
+
 
 
 
