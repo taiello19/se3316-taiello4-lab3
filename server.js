@@ -55,8 +55,31 @@ app.get('/track/:id', function (req, res) {
 });
 
 app.get('/artist', function (req, res) {
-    const artistName = artistArray.find(element => element.artist_name == req.query.artistInputName);
-    res.send(artistName.artist_id);
+    const newArray = artistArray.filter(function (element) {
+        if (this.count < 25 && element.artist_handle.toString().toLowerCase().includes(req.query.artistInputName)) {
+            this.count++;
+            return true;
+        }
+        return false;
+    }, { count: 0 });
+
+    let updateArray = [];
+    for (i = 0; i < newArray.length; i++) {
+        const json = {
+            artistID: newArray[i].artist_id,
+            artistContact: newArray[i].artist_contact,
+            artistDateCreated: newArray[i].artist_date_created,
+            artistMembers: newArray[i].artist_members,
+            artistFavorites: newArray[i].artist_favorites,
+            artistHandle: newArray[i].artist_handle,
+            artistLocation: newArray[i].artist_location,
+            artistWebsite: newArray[i].artist_website,
+        }
+        updateArray.push(json);
+
+    }
+
+    res.send(updateArray);
 
 });
 
