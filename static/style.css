@@ -2,3 +2,16 @@
     float: left;
     margin-right: 100px
 }
+
+td{
+    width: 100%;
+    border: 1px solid;
+
+}
+
+table{
+    float: left;
+    width: 30%;
+    border: 1px solid;
+
+}
