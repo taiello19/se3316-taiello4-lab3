@@ -14,18 +14,15 @@ var genresArray = [];
 var albumArray = [];
 var artistArray = [];
 var trackArray = [];
-fs.createReadStream("lab3-data/genres.csv").pipe(csv({})).on("data", (data) => genresArray.push(data)).on("end", () => {/*console.log(genresArray)*/});
-fs.createReadStream("lab3-data/raw_tracks.csv").pipe(csv({})).on("data", (data) => trackArray.push(data)).on("end", () => {/*console.log(trackArray)*/});
-fs.createReadStream("lab3-data/raw_artists.csv").pipe(csv({})).on("data", (data) => artistArray.push(data)).on("end", () => {/*console.log(artistArray)*/});
-fs.createReadStream("lab3-data/raw_albums.csv").pipe(csv({})).on("data", (data) => albumArray.push(data)).on("end", () => {/*console.log(albumArray)*/});
+fs.createReadStream("lab3-data/genres.csv").pipe(csv({})).on("data", (data) => genresArray.push(data)).on("end", () => {/*console.log(genresArray)*/ });
+fs.createReadStream("lab3-data/raw_tracks.csv").pipe(csv({})).on("data", (data) => trackArray.push(data)).on("end", () => {/*console.log(trackArray)*/ });
+fs.createReadStream("lab3-data/raw_artists.csv").pipe(csv({})).on("data", (data) => artistArray.push(data)).on("end", () => {/*console.log(artistArray)*/ });
+fs.createReadStream("lab3-data/raw_albums.csv").pipe(csv({})).on("data", (data) => albumArray.push(data)).on("end", () => {/*console.log(albumArray)*/ });
 
 
-app.get('/trackName', function(req, res){
-    res.send('You sent this to the server:' + req.query.trackInputName);
-    
-});
 
-app.get('/artist/:id', function(req, res){
+
+app.get('/artist/:id', function (req, res) {
     const artistID = artistArray.find(element => element.artist_id == req.params.id);
     const json = {};
     json.name = artistID.artist_handle;
@@ -34,11 +31,11 @@ app.get('/artist/:id', function(req, res){
     json.favs = artistID.artist_favorites;
     json.location = artistID.artist_location;
     json.website = artistID.artist_website;
-    
+
     res.send(json);
 });
 
-app.get('/track/:id', function(req, res){
+app.get('/track/:id', function (req, res) {
     const trackID = trackArray.find(element => element.track_id == req.params.id);
     const json = {};
     json.albumID = trackID.album_id;
@@ -57,11 +54,84 @@ app.get('/track/:id', function(req, res){
 
 });
 
+app.get('/artist', function (req, res) {
+    const artistName = artistArray.find(element => element.artist_name == req.query.artistInputName);
+    res.send(artistName.artist_id);
+
+});
+
+app.get('/album', function (req, res) {
+    const newArray = trackArray.filter(function (element) {
+        if (this.count < 25 && element.album_title.toString().toLowerCase().includes(req.query.albumInputName)) {
+            this.count++;
+            return true;
+        }
+        return false;
+    }, { count: 0 });
+
+    let updateArray = [];
+    for (i = 0; i < newArray.length; i++) {
+        const json = {
+            albumID: newArray[i].album_id,
+            albumTitle: newArray[i].album_title,
+            artistID: newArray[i].artist_id,
+            artistName: newArray[i].artist_name,
+            tags: newArray[i].tags,
+            dateCreated: newArray[i].track_date_created,
+            dateRecorded: newArray[i].track_date_recorded,
+            trackDuration: newArray[i].track_duration,
+            trackGenres: newArray[i].track_genres,
+            trackNumber: newArray[i].track_number,
+            trackTitle: newArray[i].track_title,
+            trackID: newArray[i].track_id,
+        }
+        updateArray.push(json);
+
+    }
+
+    res.send(updateArray);
+
+});
+
+app.get('/trackName', function (req, res) {
+    const newArray = trackArray.filter(function (element) {
+        if (this.count < 25 && element.track_title.toString().toLowerCase().includes(req.query.trackInputName)) {
+            this.count++;
+            return true;
+        }
+        return false;
+    }, { count: 0 });
+
+    let updateArray = [];
+    for (i = 0; i < newArray.length; i++) {
+        const json = {
+            albumID: newArray[i].album_id,
+            albumTitle: newArray[i].album_title,
+            artistID: newArray[i].artist_id,
+            artistName: newArray[i].artist_name,
+            tags: newArray[i].tags,
+            dateCreated: newArray[i].track_date_created,
+            dateRecorded: newArray[i].track_date_recorded,
+            trackDuration: newArray[i].track_duration,
+            trackGenres: newArray[i].track_genres,
+            trackNumber: newArray[i].track_number,
+            trackTitle: newArray[i].track_title,
+            trackID: newArray[i].track_id,
+        }
+        updateArray.push(json);
+
+    }
+    
+    res.send(updateArray);
+
+
+});
 
 
 
 
 
-app.listen(port, () =>{
+
+app.listen(port, () => {
     console.log(`Listening on port ${port}`);
 });
