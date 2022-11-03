@@ -2,6 +2,58 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 const router = express.Router();
+const mysql = require('mysql');
+
+var con = mysql.createConnection({
+    host: "localhost",
+    port: 3306,
+    user: "root",
+    password: "!bl3ach34yr%",
+    database: "playlistdb"
+  });
+  
+  con.connect(function(err) {
+    if (err) throw err;
+    console.log("Connected!");
+  });
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //front end
 app.use('/', express.static('static'));
