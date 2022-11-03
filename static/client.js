@@ -14,6 +14,10 @@ listText.addEventListener('submit', function (e) {
     const playlistName = document.getElementById("listInput").value;
 
     //add to sqlDatabase here
+    fetch("http://" + window.location.host + "/makePlaylist", { method: 'POST', body: JSON.stringify({ "playlistName": playlistName }), headers: new Headers({ 'Content-Type': 'application/json' }) })
+        .then(res => res.json())
+        .then(function (data) { })
+        .catch(err => console.log(err))
 
 
     //add to combo box
@@ -26,11 +30,11 @@ trackSearch.addEventListener('submit', function (e) {
     e.preventDefault();
 
     const track = document.getElementById("trackInput").value;
-    console.log(track);
 
     fetch("http://" + window.location.host + "/trackName?trackInputName=" + track, { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
         .then(function (data) {
+
             let div = document.getElementById("divTbl");
 
             if (div.hasChildNodes()) {
@@ -143,7 +147,7 @@ artistSearch.addEventListener('submit', function (e) {
     e.preventDefault();
 
     const artist = document.getElementById("artistInput").value;
-    
+
 
     fetch("http://" + window.location.host + "/artist?artistInputName=" + artist, { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())

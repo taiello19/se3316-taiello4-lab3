@@ -3,6 +3,10 @@ const app = express();
 const port = process.env.PORT || 3000;
 const router = express.Router();
 const mysql = require('mysql');
+//front end
+app.use('/', express.static('static'));
+
+app.use(express.json());
 
 var con = mysql.createConnection({
     host: "localhost",
@@ -10,12 +14,41 @@ var con = mysql.createConnection({
     user: "root",
     password: "!bl3ach34yr%",
     database: "playlistdb"
-  });
-  
-  con.connect(function(err) {
+});
+
+con.connect(function (err) {
     if (err) throw err;
     console.log("Connected!");
+});
+
+
+
+
+app.post("/makePlaylist", function (req, res) {
+    const playlistName = req.body.playlistName;
+    con.query(`CREATE TABLE ?? (
+        albumID VARCHAR(45) NULL,
+        albumTitle VARCHAR(45) NULL,
+        artistID VARCHAR(45) NULL,
+        artistName VARCHAR(45) NULL,
+        trackDurtaion VARCHAR(45) NULL,
+        trackID VARCHAR(45) NOT NULL,
+        trackNum VARCHAR(45) NULL,
+        trackTitle VARCHAR(45) NULL,
+        trackGenres TEXT NULL,
+        PRIMARY KEY (trackID)) CHARSET=utf8mb4;`, [playlistName], (err, data) => {
+            console.log(err);
+        res.json(`table ${playlistName} made`);
+    }) 
+});
+
+app.get("/getPlaylist", function(req, res){
+    database.query("SELECT TABLE_NAME from INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'playlistdb';", (err,data) => {
+        res.send(data);
+    });
   });
+
+
 
   
 
@@ -50,15 +83,6 @@ var con = mysql.createConnection({
 
 
 
-
-
-
-
-
-//front end
-app.use('/', express.static('static'));
-
-app.use(express.json());
 
 var csv = require("csv-parser");
 var fs = require("fs");
@@ -196,7 +220,7 @@ app.get('/trackName', function (req, res) {
         updateArray.push(json);
 
     }
-    
+
     res.send(updateArray);
 
 
