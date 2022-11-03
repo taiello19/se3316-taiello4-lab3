@@ -47,12 +47,15 @@
     </div>
 
     <div>
-        <select id="playlist" name="playlist">
+        <select id="playlistBox" name="playlistBox">
             <option selected disabled>Choose Playlist</option>
         </select>
-        <button>Choose</button>
+        <button id="chooseBtn">Choose</button>
+    </div>
 
-
+    <div class="form">
+        <input type="text" id="trackPlaylist" name="trackPlaylist" placeholder="add track ID's to playlist">
+        <button id="addBtn">Add</button>
     </div>
 
 
@@ -60,7 +63,7 @@
     <br>
 
     <div id="divTbl"></div>
-    
+
 
 
     <script src="client.js"></script>

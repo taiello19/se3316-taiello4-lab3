@@ -2,6 +2,24 @@ const artistSearch = document.getElementById("artistSearch");
 const trackSearch = document.getElementById("trackSearch");
 const albumSearch = document.getElementById("albumSearch");
 
+// window.onload = loadPlaylist;
+
+
+
+
+const listText = document.getElementById("listName");
+listText.addEventListener('submit', function (e) {
+    //prevent refresh page
+    e.preventDefault();
+    const playlistName = document.getElementById("listInput").value;
+
+    //add to sqlDatabase here
+
+
+    //add to combo box
+
+});
+
 
 trackSearch.addEventListener('submit', function (e) {
     //prevent refresh page
@@ -10,7 +28,7 @@ trackSearch.addEventListener('submit', function (e) {
     const track = document.getElementById("trackInput").value;
     console.log(track);
 
-    fetch("http://localhost:3000/trackName?trackInputName=" + track, { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
+    fetch("http://" + window.location.host + "/trackName?trackInputName=" + track, { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
         .then(function (data) {
             let div = document.getElementById("divTbl");
@@ -57,6 +75,9 @@ trackSearch.addEventListener('submit', function (e) {
             let header8 = document.createElement("th");
             header8.appendChild(document.createTextNode("trackTitle"));
 
+            let header9 = document.createElement("th");
+            header8.appendChild(document.createTextNode("trackGenres"));
+
             namesRow.appendChild(header1);
             namesRow.appendChild(header2);
             namesRow.appendChild(header3);
@@ -65,6 +86,7 @@ trackSearch.addEventListener('submit', function (e) {
             namesRow.appendChild(header6);
             namesRow.appendChild(header7);
             namesRow.appendChild(header8);
+            namesRow.appendChild(header9);
 
             for (j = 0; j < data.length; j++) {
                 const dataRow = document.createElement('tr');
@@ -106,6 +128,10 @@ trackSearch.addEventListener('submit', function (e) {
                 tData.appendChild(document.createTextNode(data[j].trackTitle));
                 dataRow.appendChild(tData);
 
+                tData = document.createElement('td');
+                tData.appendChild(document.createTextNode(data[j].trackGenres));
+                dataRow.appendChild(tData);
+
             }
 
         })
@@ -119,7 +145,7 @@ artistSearch.addEventListener('submit', function (e) {
     const artist = document.getElementById("artistInput").value;
     
 
-    fetch("http://localhost:3000/artist?artistInputName=" + artist, { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
+    fetch("http://" + window.location.host + "/artist?artistInputName=" + artist, { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
         .then(function (data) {
             let div = document.getElementById("divTbl");
@@ -227,7 +253,7 @@ albumSearch.addEventListener('submit', function (e) {
 
     const album = document.getElementById("albumInput").value;
 
-    fetch("http://localhost:3000/album?albumInputName=" + album, { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
+    fetch("http://" + window.location.host + "/album?albumInputName=" + album, { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
         .then(function (data) {
             let div = document.getElementById("divTbl");
