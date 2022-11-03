@@ -16,13 +16,16 @@ listText.addEventListener('submit', function (e) {
     //add to sqlDatabase here
     fetch("http://" + window.location.host + "/makePlaylist", { method: 'POST', body: JSON.stringify({ "playlistName": playlistName }), headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
-        .then(function (data) { })
+        .then(function (data) { 
+            const selection = document.getElementById("playlistBox");
+            const options = document.createElement("option");
+            options.appendChild(document.createTextNode(playlistName.toString()));
+            selection.appendChild(options);
+
+        })
         .catch(err => console.log(err))
-
-
-    //add to combo box
-
 });
+
 
 
 trackSearch.addEventListener('submit', function (e) {
