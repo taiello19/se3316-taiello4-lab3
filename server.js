@@ -39,8 +39,9 @@ fs.createReadStream("lab3-data/raw_albums.csv").pipe(csv({})).on("data", (data) 
 
 
 //delete a playlist (backend functionality #9)
-app.delete("/deletePlaylist", function (req, res){
+app.delete("/deletePlaylist/:playlistBox", function (req, res){
     con.query("DROP TABLE ??", [req.params.playlistBox],(err) => (console.log(err)));
+    res.json("deleted" + playlistBox);
 });
 
 //post request to create a playlist table in my sql database(backend functionality #6)
@@ -73,7 +74,7 @@ app.post("/makePlaylist", function (req, res) {
 
 //save a list of track ID's to a given list name (backend functionality #7) 
 app.put("/playlist/:playlistBox", function (req, res){
-    con.query("INSERT INTO ?? VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", 
+     con.query("INSERT INTO ?? VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", 
     [req.params.playlistBox, req.body.albumID, req.body.albumTitle, req.body.artistID, req.body.artistName, req.body.trackDuration, req.body.trackID, req.body.trackNumber, 
         req.body.trackTitle, req.body.trackGenres], (err) => (console.log(err)));
         res.json('added to db');
@@ -269,10 +270,12 @@ app.get('/trackName', function (req, res) {
             trackTitle: newArray[i].track_title,
             trackID: newArray[i].track_id,
         }
+        
+        
         updateArray.push(json);
 
     }
-
+    
     res.send(updateArray);
 
 

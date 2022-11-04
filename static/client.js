@@ -4,128 +4,140 @@ const albumSearch = document.getElementById("albumSearch");
 const playlistID = document.getElementById("playlistID");
 const listText = document.getElementById("listName");
 const comboBox = document.getElementById("playlistComboBox");
+const deletePlaylist = document.getElementById("deletePlaylist");
 
 
 
 window.onload = populateRefresh();
+
+deletePlaylist.addEventListener('submit', function (e) {
+    const playlistBox = document.getElementById("playlistBox").value;
+
+    fetch("http://" + window.location.host + "/deletePlaylist/" + playlistBox, { method: 'DELETE', headers: new Headers({ 'Content-Type': 'application/json' }) })
+        .then(res => res.json())
+        .then(data => {})
+        .catch(err => console.log(err));
+
+});
+
 
 comboBox.addEventListener('submit', function (e) {
     //prevent refresh page
     e.preventDefault();
     const selection = document.getElementById("playlistBox").value;
 
-    
+
     fetch("http://" + window.location.host + "/loadPlaylist?playlist=" + selection, { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
-    .then(res => res.json())
-    .then(function (data) {
+        .then(res => res.json())
+        .then(function (data) {
 
-        let div = document.getElementById("divTbl");
+            let div = document.getElementById("divTbl");
 
-        if (div.hasChildNodes()) {
-            document.getElementById('table').remove();
-            document.getElementById('h1').remove();
-        }
-        
-        const table = document.createElement("table");
-        table.id = "table";
-        table.className = "table";
+            if (div.hasChildNodes()) {
+                document.getElementById('table').remove();
+                document.getElementById('h1').remove();
+            }
 
-        const topText = document.createElement("h1");
-        topText.id = "h1";
-        topText.appendChild(document.createTextNode(`Displaying playlist: ${selection}`));
-        div.appendChild(topText);
+            const table = document.createElement("table");
+            table.id = "table";
+            table.className = "table";
 
-        div.appendChild(table);
+            const topText = document.createElement("h1");
+            topText.id = "h1";
+            topText.appendChild(document.createTextNode(`Displaying playlist: ${selection}`));
+            div.appendChild(topText);
 
-        let namesRow = document.createElement("tr");
-        table.appendChild(namesRow);
+            div.appendChild(table);
 
-        let header1 = document.createElement("th");
-        header1.appendChild(document.createTextNode("albumID"));
+            let namesRow = document.createElement("tr");
+            table.appendChild(namesRow);
 
-        let header2 = document.createElement("th");
-        header2.appendChild(document.createTextNode("albumTitle"));
+            let header1 = document.createElement("th");
+            header1.appendChild(document.createTextNode("albumID"));
 
-        let header3 = document.createElement("th");
-        header3.appendChild(document.createTextNode("artistID"));
+            let header2 = document.createElement("th");
+            header2.appendChild(document.createTextNode("albumTitle"));
 
-        let header4 = document.createElement("th");
-        header4.appendChild(document.createTextNode("artistName"));
+            let header3 = document.createElement("th");
+            header3.appendChild(document.createTextNode("artistID"));
 
-        let header5 = document.createElement("th");
-        header5.appendChild(document.createTextNode("trackDuration"));
+            let header4 = document.createElement("th");
+            header4.appendChild(document.createTextNode("artistName"));
 
-        let header6 = document.createElement("th");
-        header6.appendChild(document.createTextNode("trackID"));
+            let header5 = document.createElement("th");
+            header5.appendChild(document.createTextNode("trackDuration"));
 
-        let header7 = document.createElement("th");
-        header7.appendChild(document.createTextNode("trackNum"));
+            let header6 = document.createElement("th");
+            header6.appendChild(document.createTextNode("trackID"));
 
-        let header8 = document.createElement("th");
-        header8.appendChild(document.createTextNode("trackTitle"));
+            let header7 = document.createElement("th");
+            header7.appendChild(document.createTextNode("trackNum"));
 
-        let header9 = document.createElement("th");
-        header9.appendChild(document.createTextNode("trackGenres"));
+            let header8 = document.createElement("th");
+            header8.appendChild(document.createTextNode("trackTitle"));
 
-        namesRow.appendChild(header1);
-        namesRow.appendChild(header2);
-        namesRow.appendChild(header3);
-        namesRow.appendChild(header4);
-        namesRow.appendChild(header5);
-        namesRow.appendChild(header6);
-        namesRow.appendChild(header7);
-        namesRow.appendChild(header8);
-        namesRow.appendChild(header9);
+            let header9 = document.createElement("th");
+            header9.appendChild(document.createTextNode("trackGenres"));
 
-        for (j = 0; j < data.length; j++) {
-            const dataRow = document.createElement('tr');
-            table.appendChild(dataRow);
+            namesRow.appendChild(header1);
+            namesRow.appendChild(header2);
+            namesRow.appendChild(header3);
+            namesRow.appendChild(header4);
+            namesRow.appendChild(header5);
+            namesRow.appendChild(header6);
+            namesRow.appendChild(header7);
+            namesRow.appendChild(header8);
+            namesRow.appendChild(header9);
 
-
-            let tData = document.createElement('td');
-            tData.appendChild(document.createTextNode(data[j].albumID));
-            dataRow.appendChild(tData);
+            for (j = 0; j < data.length; j++) {
+                const dataRow = document.createElement('tr');
+                table.appendChild(dataRow);
 
 
-            tData = document.createElement('td');
-            tData.appendChild(document.createTextNode(data[j].albumTitle));
-            dataRow.appendChild(tData);
+                let tData = document.createElement('td');
+                tData.appendChild(document.createTextNode(data[j].albumID));
+                dataRow.appendChild(tData);
 
 
-            tData = document.createElement('td');
-            tData.appendChild(document.createTextNode(data[j].artistID));
-            dataRow.appendChild(tData);
+                tData = document.createElement('td');
+                tData.appendChild(document.createTextNode(data[j].albumTitle));
+                dataRow.appendChild(tData);
 
 
-            tData = document.createElement('td');
-            tData.appendChild(document.createTextNode(data[j].artistName));
-            dataRow.appendChild(tData);
+                tData = document.createElement('td');
+                tData.appendChild(document.createTextNode(data[j].artistID));
+                dataRow.appendChild(tData);
 
-            tData = document.createElement('td');
-            tData.appendChild(document.createTextNode(data[j].trackDuration));
-            dataRow.appendChild(tData);
 
-            tData = document.createElement('td');
-            tData.appendChild(document.createTextNode(data[j].trackID));
-            dataRow.appendChild(tData);
+                tData = document.createElement('td');
+                tData.appendChild(document.createTextNode(data[j].artistName));
+                dataRow.appendChild(tData);
 
-            tData = document.createElement('td');
-            tData.appendChild(document.createTextNode(data[j].trackNum));
-            dataRow.appendChild(tData);
+                tData = document.createElement('td');
+                tData.appendChild(document.createTextNode(data[j].trackDuration));
+                dataRow.appendChild(tData);
 
-            tData = document.createElement('td');
-            tData.appendChild(document.createTextNode(data[j].trackTitle));
-            dataRow.appendChild(tData);
+                tData = document.createElement('td');
+                tData.appendChild(document.createTextNode(data[j].trackID));
+                dataRow.appendChild(tData);
 
-            tData = document.createElement('td');
-            tData.appendChild(document.createTextNode(data[j].trackGenres));
-            console.log(tData)
-            dataRow.appendChild(tData);
+                tData = document.createElement('td');
+                tData.appendChild(document.createTextNode(data[j].trackNum));
+                dataRow.appendChild(tData);
 
-        }
+                tData = document.createElement('td');
+                tData.appendChild(document.createTextNode(data[j].trackTitle));
+                dataRow.appendChild(tData);
 
-    })
-    .catch(err => console.log(err))
+                tData = document.createElement('td');
+                tData.appendChild(document.createTextNode(data[j].trackGenres));
+                console.log(tData)
+                dataRow.appendChild(tData);
+
+            }
+
+        })
+        .catch(err => console.log(err))
 });
 
 
@@ -214,7 +226,7 @@ trackSearch.addEventListener('submit', function (e) {
                 document.getElementById('table').remove();
                 document.getElementById('h1').remove();
             }
-            
+
             const table = document.createElement("table");
             table.id = "table";
             table.className = "table";
