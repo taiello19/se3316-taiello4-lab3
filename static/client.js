@@ -7,9 +7,10 @@ const comboBox = document.getElementById("playlistComboBox");
 const deletePlaylist = document.getElementById("deletePlaylist");
 
 
-
+//load combobox
 window.onload = populateRefresh();
 
+//deletes a playlist
 deletePlaylist.addEventListener('submit', function (e) {
     const playlistBox = document.getElementById("playlistBox").value;
 
@@ -20,7 +21,7 @@ deletePlaylist.addEventListener('submit', function (e) {
 
 });
 
-
+//load playlist to display to screen
 comboBox.addEventListener('submit', function (e) {
     //prevent refresh page
     e.preventDefault();
@@ -142,7 +143,7 @@ comboBox.addEventListener('submit', function (e) {
 
 
 
-
+//create a playlist name and table
 listText.addEventListener('submit', function (e) {
     //prevent refresh page
     e.preventDefault();
@@ -171,7 +172,7 @@ listText.addEventListener('submit', function (e) {
 
 
 
-
+//populate combobox on refresh
 function populateRefresh() {
     fetch("http://" + window.location.host + "/getPlaylist", { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
@@ -190,21 +191,21 @@ function populateRefresh() {
 
 
 
-
+//adding songs to playlist
 playlistID.addEventListener('submit', function (e) {
     //prevent refresh page
     e.preventDefault();
     const playlistBox = document.getElementById("playlistBox").value;
     const trackID = document.getElementById("trackPlaylist").value;
     let ID = trackID.toString().split(",");
-
+//clear first
     fetch("http://" + window.location.host + "/truncatePlaylist/" + playlistBox, { method: 'PUT', headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
         .then(data => {
             
         })
         .catch(err => console.log(err));
-
+//then add
     for (i = 0; i < ID.length; i++) {
 
         fetch("http://" + window.location.host + "/track/" + ID[i], { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
@@ -224,7 +225,7 @@ playlistID.addEventListener('submit', function (e) {
 
 
 
-
+//search by track name + display
 trackSearch.addEventListener('submit', function (e) {
     //prevent refresh page
     e.preventDefault();
@@ -343,7 +344,7 @@ trackSearch.addEventListener('submit', function (e) {
         })
         .catch(err => console.log(err))
 });
-
+//search and display by artist name
 artistSearch.addEventListener('submit', function (e) {
     //prevent refresh page
     e.preventDefault();
@@ -453,6 +454,7 @@ artistSearch.addEventListener('submit', function (e) {
         .catch(err => console.log(err))
 });
 
+//search and display album name
 albumSearch.addEventListener('submit', function (e) {
     //prevent refresh page
     e.preventDefault();

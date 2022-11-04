@@ -84,6 +84,7 @@ app.post("/makePlaylist", function (req, res) {
     })
 });
 
+//reset playlist
 app.put("/truncatePlaylist/:playlistBox", function (req, res) {
     con.query("TRUNCATE TABLE ??;", [req.params.playlistBox], (err) => (console.log(err)));
     
