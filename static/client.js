@@ -15,7 +15,7 @@ deletePlaylist.addEventListener('submit', function (e) {
 
     fetch("http://" + window.location.host + "/deletePlaylist/" + playlistBox, { method: 'DELETE', headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
-        .then(data => {})
+        .then(data => { })
         .catch(err => console.log(err));
 
 });
@@ -152,10 +152,18 @@ listText.addEventListener('submit', function (e) {
     fetch("http://" + window.location.host + "/makePlaylist", { method: 'POST', body: JSON.stringify({ "playlistName": playlistName }), headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
         .then(function (data) {
-            const selection = document.getElementById("playlistBox");
-            const options = document.createElement("option");
-            options.appendChild(document.createTextNode(playlistName.toString()));
-            selection.appendChild(options);
+
+            if (data == "ER_TABLE_EXISTS_ERROR") {
+                window.alert("error");
+            }
+            else {
+                const selection = document.getElementById("playlistBox");
+                const options = document.createElement("option");
+                options.appendChild(document.createTextNode(playlistName.toString()));
+                selection.appendChild(options);
+            }
+
+
 
         })
         .catch(err => console.log(err))
@@ -189,6 +197,13 @@ playlistID.addEventListener('submit', function (e) {
     const playlistBox = document.getElementById("playlistBox").value;
     const trackID = document.getElementById("trackPlaylist").value;
     let ID = trackID.toString().split(",");
+
+    fetch("http://" + window.location.host + "/truncatePlaylist/" + playlistBox, { method: 'PUT', headers: new Headers({ 'Content-Type': 'application/json' }) })
+        .then(res => res.json())
+        .then(data => {
+            
+        })
+        .catch(err => console.log(err));
 
     for (i = 0; i < ID.length; i++) {
 

@@ -39,8 +39,8 @@ fs.createReadStream("lab3-data/raw_albums.csv").pipe(csv({})).on("data", (data) 
 
 
 //delete a playlist (backend functionality #9)
-app.delete("/deletePlaylist/:playlistBox", function (req, res){
-    con.query("DROP TABLE ??", [req.params.playlistBox],(err) => (console.log(err)));
+app.delete("/deletePlaylist/:playlistBox", function (req, res) {
+    con.query("DROP TABLE ??", [req.params.playlistBox], (err) => (console.log(err)));
     res.json("deleted" + playlistBox);
 });
 
@@ -52,10 +52,12 @@ app.post("/makePlaylist", function (req, res) {
         playlistName: Joi.string().required()
     });
     const validate = schema.validate(req.body);
-    if (validate.error){
+    if (validate.error) {
         res.status(400);
         return;
     }
+
+
     con.query(`CREATE TABLE ?? (
         albumID VARCHAR(45) NULL,
         albumTitle VARCHAR(45) NULL,
@@ -67,30 +69,46 @@ app.post("/makePlaylist", function (req, res) {
         trackTitle VARCHAR(45) NULL,
         trackGenres VARCHAR(5000) NULL,
         PRIMARY KEY (trackID)) CHARSET=utf8mb4;`, [playlistName], (err, data) => {
-            console.log(err);
-        res.json(`table ${playlistName} made`);
-    }) 
+        console.log(err);
+        if (err) {
+            if (err.code === 'ER_TABLE_EXISTS_ERROR') {
+                res.json("ER_TABLE_EXISTS_ERROR");
+            }
+            else {
+                res.json(`table ${playlistName} made`);
+            }
+        }
+        else {
+            res.json(`table ${playlistName} made`);
+        }
+    })
+});
+
+app.put("/truncatePlaylist/:playlistBox", function (req, res) {
+    con.query("TRUNCATE TABLE ??;", [req.params.playlistBox], (err) => (console.log(err)));
+    
 });
 
 //save a list of track ID's to a given list name (backend functionality #7) 
-app.put("/playlist/:playlistBox", function (req, res){
-     con.query("INSERT INTO ?? VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", 
-    [req.params.playlistBox, req.body.albumID, req.body.albumTitle, req.body.artistID, req.body.artistName, req.body.trackDuration, req.body.trackID, req.body.trackNumber, 
+app.put("/playlist/:playlistBox", function (req, res) {
+
+    con.query("INSERT INTO ?? VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);",
+        [req.params.playlistBox, req.body.albumID, req.body.albumTitle, req.body.artistID, req.body.artistName, req.body.trackDuration, req.body.trackID, req.body.trackNumber,
         req.body.trackTitle, req.body.trackGenres], (err) => (console.log(err)));
-        res.json('added to db');
+    res.json('added to db');
 })
 
-app.get("/loadPlaylist", function (req, res){
-    con.query("SELECT * FROM ??" , [req.query.playlist], (req, data) =>
+app.get("/loadPlaylist", function (req, res) {
+    con.query("SELECT * FROM ??", [req.query.playlist], (req, data) =>
         res.json(data))
 })
 
 
-app.get("/getPlaylist", function(req, res){
-    con.query("SELECT TABLE_NAME from INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'playlistdb';", (err,data) => {
+app.get("/getPlaylist", function (req, res) {
+    con.query("SELECT TABLE_NAME from INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'playlistdb';", (err, data) => {
         res.send(data);
     });
-  });
+});
 
 
 
@@ -101,8 +119,8 @@ app.get('/artist/:id', function (req, res) {
     const schema = Joi.object({
         id: Joi.number().required()
     });
-    const validate = schema.validate({id: parseInt(req.params.id)});
-    if (validate.error){
+    const validate = schema.validate({ id: parseInt(req.params.id) });
+    if (validate.error) {
         res.status(400);
         return;
     }
@@ -124,8 +142,8 @@ app.get('/track/:id', function (req, res) {
     const schema = Joi.object({
         id: Joi.number().required()
     });
-    const validate = schema.validate({id: parseInt(req.params.id)});
-    if (validate.error){
+    const validate = schema.validate({ id: parseInt(req.params.id) });
+    if (validate.error) {
         res.status(400);
         return;
     }
@@ -156,7 +174,7 @@ app.get('/artist', function (req, res) {
         artistInputName: Joi.string().required()
     });
     const validate = schema.validate(req.query);
-    if (validate.error){
+    if (validate.error) {
         res.status(400);
         return;
     }
@@ -196,7 +214,7 @@ app.get('/album', function (req, res) {
         albumInputName: Joi.string().required()
     });
     const validate = schema.validate(req.query);
-    if (validate.error){
+    if (validate.error) {
         res.status(400);
         return;
     }
@@ -239,7 +257,7 @@ app.get('/trackName', function (req, res) {
         trackInputName: Joi.string().required()
     });
     const validate = schema.validate(req.query);
-    if (validate.error){
+    if (validate.error) {
         res.status(400);
         return;
     }
@@ -270,12 +288,12 @@ app.get('/trackName', function (req, res) {
             trackTitle: newArray[i].track_title,
             trackID: newArray[i].track_id,
         }
-        
-        
+
+
         updateArray.push(json);
 
     }
-    
+
     res.send(updateArray);
 
 
