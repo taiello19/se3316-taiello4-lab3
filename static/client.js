@@ -154,7 +154,7 @@ listText.addEventListener('submit', function (e) {
         .then(function (data) {
 
             if (data == "ER_TABLE_EXISTS_ERROR") {
-                window.alert("error");
+                window.alert("error name already exists");
             }
             else {
                 const selection = document.getElementById("playlistBox");
