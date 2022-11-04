@@ -1,8 +1,9 @@
 const artistSearch = document.getElementById("artistSearch");
 const trackSearch = document.getElementById("trackSearch");
 const albumSearch = document.getElementById("albumSearch");
+const playlistID = document.getElementById("playlistID");
 
-// window.onload = loadPlaylist;
+window.onload = populateRefresh();
 
 
 
@@ -16,7 +17,7 @@ listText.addEventListener('submit', function (e) {
     //add to sqlDatabase here
     fetch("http://" + window.location.host + "/makePlaylist", { method: 'POST', body: JSON.stringify({ "playlistName": playlistName }), headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
-        .then(function (data) { 
+        .then(function (data) {
             const selection = document.getElementById("playlistBox");
             const options = document.createElement("option");
             options.appendChild(document.createTextNode(playlistName.toString()));
@@ -25,6 +26,38 @@ listText.addEventListener('submit', function (e) {
         })
         .catch(err => console.log(err))
 });
+
+function populateRefresh() {
+    fetch("http://" + window.location.host + "/getPlaylist", { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
+        .then(res => res.json())
+        .then(function (data) {
+            for (i = 0; i < data.length; i++) {
+                const selection = document.getElementById("playlistBox");
+                const options = document.createElement("option");
+                options.appendChild(document.createTextNode(data[i].TABLE_NAME));
+                selection.appendChild(options);
+                console.log(selection);
+            }
+        })
+        .catch(err => console.log(err))
+}
+
+
+
+playlistID.addEventListener('submit', function (e) {
+    //prevent refresh page
+    e.preventDefault();
+    const plID = document.getElementById("playlistBox").value;
+    const trackID = document.getElementById("trackPlaylist").value;
+
+    //add to sqlDatabase here
+    fetch("http://" + window.location.host + "/makePlaylist", { method: 'PUT', body: JSON.stringify({ "playlistName": playlistName }), headers: new Headers({ 'Content-Type': 'application/json' }) })
+        .then(res => res.json())
+        .then(function (data) {})
+        .catch(err => console.log(err))
+});
+
+
 
 
 
@@ -44,6 +77,7 @@ trackSearch.addEventListener('submit', function (e) {
                 document.getElementById('table').remove();
                 document.getElementById('h1').remove();
             }
+            
             const table = document.createElement("table");
             table.id = "table";
             table.className = "table";
@@ -83,7 +117,7 @@ trackSearch.addEventListener('submit', function (e) {
             header8.appendChild(document.createTextNode("trackTitle"));
 
             let header9 = document.createElement("th");
-            header8.appendChild(document.createTextNode("trackGenres"));
+            header9.appendChild(document.createTextNode("trackGenres"));
 
             namesRow.appendChild(header1);
             namesRow.appendChild(header2);
@@ -137,6 +171,7 @@ trackSearch.addEventListener('submit', function (e) {
 
                 tData = document.createElement('td');
                 tData.appendChild(document.createTextNode(data[j].trackGenres));
+                console.log(tData)
                 dataRow.appendChild(tData);
 
             }

@@ -3,6 +3,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 const router = express.Router();
 const mysql = require('mysql');
+const Joi = require('joi');
 //front end
 app.use('/', express.static('static'));
 
@@ -26,6 +27,14 @@ con.connect(function (err) {
 
 app.post("/makePlaylist", function (req, res) {
     const playlistName = req.body.playlistName;
+    const schema = Joi.object({
+        playlistName: Joi.string().required()
+    });
+    const validate = schema.validate(req.body);
+    if (validate.error){
+        res.status(400);
+        return;
+    }
     con.query(`CREATE TABLE ?? (
         albumID VARCHAR(45) NULL,
         albumTitle VARCHAR(45) NULL,
@@ -43,45 +52,10 @@ app.post("/makePlaylist", function (req, res) {
 });
 
 app.get("/getPlaylist", function(req, res){
-    database.query("SELECT TABLE_NAME from INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'playlistdb';", (err,data) => {
+    con.query("SELECT TABLE_NAME from INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'playlistdb';", (err,data) => {
         res.send(data);
     });
   });
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 var csv = require("csv-parser");
@@ -99,6 +73,16 @@ fs.createReadStream("lab3-data/raw_albums.csv").pipe(csv({})).on("data", (data) 
 
 
 app.get('/artist/:id', function (req, res) {
+    const schema = Joi.object({
+        id: Joi.number().required()
+    });
+    const validate = schema.validate({id: parseInt(req.params.id)});
+    if (validate.error){
+        res.status(400);
+        return;
+    }
+
+
     const artistID = artistArray.find(element => element.artist_id == req.params.id);
     const json = {};
     json.name = artistID.artist_handle;
@@ -112,6 +96,16 @@ app.get('/artist/:id', function (req, res) {
 });
 
 app.get('/track/:id', function (req, res) {
+    const schema = Joi.object({
+        id: Joi.number().required()
+    });
+    const validate = schema.validate({id: parseInt(req.params.id)});
+    if (validate.error){
+        res.status(400);
+        return;
+    }
+
+
     const trackID = trackArray.find(element => element.track_id == req.params.id);
     const json = {};
     json.albumID = trackID.album_id;
@@ -131,6 +125,16 @@ app.get('/track/:id', function (req, res) {
 });
 
 app.get('/artist', function (req, res) {
+    const schema = Joi.object({
+        artistInputName: Joi.string().required()
+    });
+    const validate = schema.validate(req.query);
+    if (validate.error){
+        res.status(400);
+        return;
+    }
+
+
     const newArray = artistArray.filter(function (element) {
         if (this.count < 25 && element.artist_handle.toString().toLowerCase().includes(req.query.artistInputName)) {
             this.count++;
@@ -160,6 +164,14 @@ app.get('/artist', function (req, res) {
 });
 
 app.get('/album', function (req, res) {
+    const schema = Joi.object({
+        albumInputName: Joi.string().required()
+    });
+    const validate = schema.validate(req.query);
+    if (validate.error){
+        res.status(400);
+        return;
+    }
     const newArray = trackArray.filter(function (element) {
         if (this.count < 25 && element.album_title.toString().toLowerCase().includes(req.query.albumInputName)) {
             this.count++;
@@ -193,6 +205,17 @@ app.get('/album', function (req, res) {
 });
 
 app.get('/trackName', function (req, res) {
+    const schema = Joi.object({
+        trackInputName: Joi.string().required()
+    });
+    const validate = schema.validate(req.query);
+    if (validate.error){
+        res.status(400);
+        return;
+    }
+
+
+
     const newArray = trackArray.filter(function (element) {
         if (this.count < 25 && element.track_title.toString().toLowerCase().includes(req.query.trackInputName)) {
             this.count++;
