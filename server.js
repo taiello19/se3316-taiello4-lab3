@@ -1,14 +1,17 @@
+//variable declarations
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 const router = express.Router();
 const mysql = require('mysql');
 const Joi = require('joi');
+
 //front end
 app.use('/', express.static('static'));
 
 app.use(express.json());
 
+//my sql connection to local database
 var con = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -22,10 +25,27 @@ con.connect(function (err) {
     console.log("database is up and running!! ('-'*ゞ");
 });
 
+//using csv parser
+var csv = require("csv-parser");
+var fs = require("fs");
+var genresArray = [];
+var albumArray = [];
+var artistArray = [];
+var trackArray = [];
+fs.createReadStream("lab3-data/genres.csv").pipe(csv({})).on("data", (data) => genresArray.push(data)).on("end", () => {/*console.log(genresArray)*/ });
+fs.createReadStream("lab3-data/raw_tracks.csv").pipe(csv({})).on("data", (data) => trackArray.push(data)).on("end", () => {/*console.log(trackArray)*/ });
+fs.createReadStream("lab3-data/raw_artists.csv").pipe(csv({})).on("data", (data) => artistArray.push(data)).on("end", () => {/*console.log(artistArray)*/ });
+fs.createReadStream("lab3-data/raw_albums.csv").pipe(csv({})).on("data", (data) => albumArray.push(data)).on("end", () => {/*console.log(albumArray)*/ });
 
 
+//delete a playlist (backend functionality #9)
+app.delete("/deletePlaylist", function (req, res){
+    con.query("DROP TABLE ??", [req.params.playlistBox],(err) => (console.log(err)));
+});
 
+//post request to create a playlist table in my sql database(backend functionality #6)
 app.post("/makePlaylist", function (req, res) {
+    //input sanitization
     const playlistName = req.body.playlistName;
     const schema = Joi.object({
         playlistName: Joi.string().required()
@@ -40,16 +60,30 @@ app.post("/makePlaylist", function (req, res) {
         albumTitle VARCHAR(45) NULL,
         artistID VARCHAR(45) NULL,
         artistName VARCHAR(45) NULL,
-        trackDurtaion VARCHAR(45) NULL,
+        trackDuration VARCHAR(45) NULL,
         trackID VARCHAR(45) NOT NULL,
         trackNum VARCHAR(45) NULL,
         trackTitle VARCHAR(45) NULL,
-        trackGenres TEXT NULL,
+        trackGenres VARCHAR(5000) NULL,
         PRIMARY KEY (trackID)) CHARSET=utf8mb4;`, [playlistName], (err, data) => {
             console.log(err);
         res.json(`table ${playlistName} made`);
     }) 
 });
+
+//save a list of track ID's to a given list name (backend functionality #7) 
+app.put("/playlist/:playlistBox", function (req, res){
+    con.query("INSERT INTO ?? VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", 
+    [req.params.playlistBox, req.body.albumID, req.body.albumTitle, req.body.artistID, req.body.artistName, req.body.trackDuration, req.body.trackID, req.body.trackNumber, 
+        req.body.trackTitle, req.body.trackGenres], (err) => (console.log(err)));
+        res.json('added to db');
+})
+
+app.get("/loadPlaylist", function (req, res){
+    con.query("SELECT * FROM ??" , [req.query.playlist], (req, data) =>
+        res.json(data))
+})
+
 
 app.get("/getPlaylist", function(req, res){
     con.query("SELECT TABLE_NAME from INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = 'playlistdb';", (err,data) => {
@@ -58,20 +92,10 @@ app.get("/getPlaylist", function(req, res){
   });
 
 
-var csv = require("csv-parser");
-var fs = require("fs");
-var genresArray = [];
-var albumArray = [];
-var artistArray = [];
-var trackArray = [];
-fs.createReadStream("lab3-data/genres.csv").pipe(csv({})).on("data", (data) => genresArray.push(data)).on("end", () => {/*console.log(genresArray)*/ });
-fs.createReadStream("lab3-data/raw_tracks.csv").pipe(csv({})).on("data", (data) => trackArray.push(data)).on("end", () => {/*console.log(trackArray)*/ });
-fs.createReadStream("lab3-data/raw_artists.csv").pipe(csv({})).on("data", (data) => artistArray.push(data)).on("end", () => {/*console.log(artistArray)*/ });
-fs.createReadStream("lab3-data/raw_albums.csv").pipe(csv({})).on("data", (data) => albumArray.push(data)).on("end", () => {/*console.log(albumArray)*/ });
 
 
 
-
+//get all matching artist details given an artist ID (backend functionality #2)
 app.get('/artist/:id', function (req, res) {
     const schema = Joi.object({
         id: Joi.number().required()
@@ -94,7 +118,7 @@ app.get('/artist/:id', function (req, res) {
 
     res.send(json);
 });
-
+//gets the first n number of matching track ID's (backend functionality #3)
 app.get('/track/:id', function (req, res) {
     const schema = Joi.object({
         id: Joi.number().required()
@@ -125,6 +149,7 @@ app.get('/track/:id', function (req, res) {
 
 });
 
+//backend functionality #5 get artist ID's for all artist name search + more for frontend display, 
 app.get('/artist', function (req, res) {
     const schema = Joi.object({
         artistInputName: Joi.string().required()
@@ -164,6 +189,7 @@ app.get('/artist', function (req, res) {
 
 });
 
+//backend functionality #4 cont, search by album
 app.get('/album', function (req, res) {
     const schema = Joi.object({
         albumInputName: Joi.string().required()
@@ -205,6 +231,8 @@ app.get('/album', function (req, res) {
 
 });
 
+
+//get the first n number of track ID's for track title ( backend functionality #4)
 app.get('/trackName', function (req, res) {
     const schema = Joi.object({
         trackInputName: Joi.string().required()
@@ -249,13 +277,6 @@ app.get('/trackName', function (req, res) {
 
 
 });
-
-
-
-
-
-
-
 
 
 app.listen(port, () => {
