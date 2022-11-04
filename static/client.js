@@ -2,13 +2,14 @@ const artistSearch = document.getElementById("artistSearch");
 const trackSearch = document.getElementById("trackSearch");
 const albumSearch = document.getElementById("albumSearch");
 const playlistID = document.getElementById("playlistID");
+const listText = document.getElementById("listName");
 
 window.onload = populateRefresh();
 
 
 
 
-const listText = document.getElementById("listName");
+
 listText.addEventListener('submit', function (e) {
     //prevent refresh page
     e.preventDefault();
@@ -26,6 +27,9 @@ listText.addEventListener('submit', function (e) {
         })
         .catch(err => console.log(err))
 });
+
+
+
 
 function populateRefresh() {
     fetch("http://" + window.location.host + "/getPlaylist", { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
@@ -47,14 +51,24 @@ function populateRefresh() {
 playlistID.addEventListener('submit', function (e) {
     //prevent refresh page
     e.preventDefault();
-    const plID = document.getElementById("playlistBox").value;
+    const playlistBox = document.getElementById("playlistBox").value;
     const trackID = document.getElementById("trackPlaylist").value;
+    let ID = trackID.toString().split(",");
 
-    //add to sqlDatabase here
-    fetch("http://" + window.location.host + "/makePlaylist", { method: 'PUT', body: JSON.stringify({ "playlistName": playlistName }), headers: new Headers({ 'Content-Type': 'application/json' }) })
+    for(i=0; i < ID.length; i++){
+    fetch("http://" + window.location.host + "/track/" + ID[i], { method: 'GET', headers: new Headers({ 'Content-Type': 'application/json' }) })
         .then(res => res.json())
-        .then(function (data) {})
+        .then(function (data) {
+            let newArray = [];
+            newArray.push(data);
+            console.log(data);
+        })
         .catch(err => console.log(err))
+    }
+
+    
+
+
 });
 
 

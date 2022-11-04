@@ -19,7 +19,7 @@ var con = mysql.createConnection({
 
 con.connect(function (err) {
     if (err) throw err;
-    console.log("Connected!");
+    console.log("database is up and running!! ('-'*ゞ");
 });
 
 
@@ -119,8 +119,9 @@ app.get('/track/:id', function (req, res) {
     json.trackGenres = trackID.track_genres;
     json.trackNumber = trackID.track_number;
     json.trackTitle = trackID.track_title;
+    json.trackID = trackID.track_id;
 
-    res.send(json);
+    res.json(json);
 
 });
 
@@ -248,6 +249,9 @@ app.get('/trackName', function (req, res) {
 
 
 });
+
+
+
 
 
 
